@@ -76,7 +76,8 @@ public class SampleSourceConnector extends SourceConnector {
         int monitorThreadTimeout = config.getInt(MONITOR_THREAD_TIMEOUT_CONFIG);
         sourceMonitorThread = new SourceMonitorThread(
             context, firstParam, secondParam, monitorThreadTimeout);
-        sourceMonitorThread.start();
+        //NOTE: disabled
+        // sourceMonitorThread.start();
     }
 
     @Override
