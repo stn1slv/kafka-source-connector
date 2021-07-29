@@ -21,6 +21,13 @@ After building the connector you can try it by using the Docker-based installati
 
 ### 1 - Starting the environment
 
+Remove old containers:
+
+```bash
+docker rm kafka zookeeper connect
+
+```
+
 Start the environment with the following command:
 
 ```bash
