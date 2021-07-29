@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.apache.kafka.connect.source.SourceTask;
@@ -15,7 +16,6 @@ import org.apache.kafka.connect.source.SourceTask;
 import static com.acme.kafka.connect.sample.SampleSourceConnectorConfig.*;
 
 public class SampleSourceTask extends SourceTask {
-
     private static Logger log = LoggerFactory.getLogger(SampleSourceTask.class);
 
     private SampleSourceConnectorConfig config;
@@ -41,17 +41,22 @@ public class SampleSourceTask extends SourceTask {
         List<SourceRecord> records = new ArrayList<>();
         for (String source : sources) {
             log.info("Polling data from the source '" + source + "'");
-            records.add(new SourceRecord(
-                Collections.singletonMap("source", source),
-                Collections.singletonMap("offset", 0),
-                source, null, null, null, Schema.BYTES_SCHEMA,
-                String.format("Data from %s", source).getBytes()));
+            records.add(new SourceRecord(Collections.singletonMap("source", source),
+                    Collections.singletonMap("offset", 0), source, null, null, null, Schema.BYTES_SCHEMA,
+                    String.format("Data from %s", source).getBytes()));
         }
+        log.info("Push " + sources.size() + " source records");
         return records;
     }
 
     @Override
     public void stop() {
+    }
+
+    @Override
+    public void commitRecord(SourceRecord record, RecordMetadata metadata) throws InterruptedException {
+        log.info("Record commited: " + record);
+        super.commitRecord(record, metadata);
     }
 
 }
