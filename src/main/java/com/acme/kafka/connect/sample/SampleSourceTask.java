@@ -39,13 +39,15 @@ public class SampleSourceTask extends SourceTask {
     public List<SourceRecord> poll() throws InterruptedException {
         Thread.sleep(monitorThreadTimeout / 2);
         List<SourceRecord> records = new ArrayList<>();
+        SourceRecord record;
         for (String source : sources) {
-            log.info("Polling data from the source '" + source + "'");
-            records.add(new SourceRecord(Collections.singletonMap("source", source),
-                    Collections.singletonMap("offset", 0), source, null, null, null, Schema.BYTES_SCHEMA,
-                    String.format("Data from %s", source).getBytes()));
+            record = new SourceRecord(Collections.singletonMap("source", source), Collections.singletonMap("offset", 0),
+                    source, null, null, null, Schema.BYTES_SCHEMA, String.format("Data from %s", source).getBytes());
+            // log.info("Polling data from the source '" + source + "' " + record.value());
+            log.info("Record prepared: " + record.value());
+            records.add(record);
         }
-        log.info("Push " + sources.size() + " source records");
+        // log.info("Processed " + sources.size() + " source records");
         return records;
     }
 
@@ -55,7 +57,7 @@ public class SampleSourceTask extends SourceTask {
 
     @Override
     public void commitRecord(SourceRecord record, RecordMetadata metadata) throws InterruptedException {
-        log.info("Record commited: " + record);
+        log.info("Record commited: " + record.value());
         super.commitRecord(record, metadata);
     }
 
